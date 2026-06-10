@@ -1,0 +1,148 @@
+/* ✅ Navbar */
+.navbar{
+  background:#0f172a;
+
+  border-bottom:
+  1px solid rgba(255,255,255,0.08);
+
+  position:sticky;
+  top:0;
+
+  z-index:1000;
+
+  padding:14px 24px;
+}
+
+/* ✅ Top Row */
+.navbar-top{
+  display:flex;
+
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* ✅ Logo */
+.logo{
+  margin:0;
+
+  font-size:22px;
+  font-weight:700;
+
+  color:white;
+
+  letter-spacing:0.3px;
+}
+
+/* ✅ Nav Links */
+.nav-links{
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+}
+
+/* ✅ Nav Item */
+.nav-item{
+  text-decoration:none;
+
+  color:#f8fafc;
+
+  padding:8px 14px;
+
+  border-radius:10px;
+
+  font-size:15px;
+  font-weight:500;
+
+  transition:0.2s ease;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+}
+
+/* ✅ Hover */
+.nav-item:hover{
+  background:rgba(255,255,255,0.08);
+}
+
+/* ✅ Active */
+.nav-item.active{
+  background:#facc15;
+
+  color:#111827;
+
+  font-weight:600;
+}
+
+/* ✅ Icons */
+.nav-item svg{
+  font-size:14px;
+}
+
+/* ✅ Mobile Menu Button */
+.menu-btn{
+  display:none;
+
+  background:none;
+
+  border:none;
+
+  color:white;
+
+  font-size:22px;
+
+  cursor:pointer;
+}
+
+/* ✅ Desktop */
+@media(min-width:769px){
+
+  .navbar{
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+  }
+
+}
+
+/* ✅ Mobile */
+@media(max-width:768px){
+
+  .navbar{
+    padding:14px 18px;
+  }
+
+  .menu-btn{
+    display:block;
+  }
+
+  .nav-links{
+    display:none;
+
+    flex-direction:column;
+
+    width:100%;
+
+    margin-top:16px;
+
+    gap:10px;
+  }
+
+  .show-menu{
+    display:flex;
+  }
+
+  .nav-item{
+    width:100%;
+
+    padding:12px 14px;
+
+    background:rgba(255,255,255,0.03);
+  }
+
+}

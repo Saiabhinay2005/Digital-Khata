@@ -1,0 +1,163 @@
+/* ✅ Page Layout */
+.page-container{
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+
+  padding-top:90px;
+  padding-left:20px;
+  padding-right:20px;
+
+  background:#f4f7fb;
+}
+
+/* ✅ Main History Card */
+.history{
+  width:100%;
+  max-width:850px;
+
+  background:white;
+
+  padding:30px;
+
+  border-radius:16px;
+
+  border:1px solid #e5e7eb;
+
+  box-shadow:
+  0 2px 10px rgba(0,0,0,0.06);
+}
+
+/* ✅ Title */
+.history h2{
+  text-align:center;
+
+  margin-bottom:25px;
+
+  font-size:32px;
+  font-weight:700;
+
+  color:#1e293b;
+}
+
+/* ✅ Dropdown */
+.history select{
+  width:100%;
+
+  padding:14px;
+
+  margin-bottom:20px;
+
+  border:1px solid #d1d5db;
+
+  border-radius:10px;
+
+  background:white;
+
+  font-size:15px;
+
+  transition:0.2s ease;
+}
+
+/* ✅ Focus */
+.history select:focus{
+  outline:none;
+
+  border-color:#4f46e5;
+
+  box-shadow:
+  0 0 0 3px rgba(79,70,229,0.12);
+}
+
+/* ✅ Table */
+.history-table{
+  width:100%;
+
+  border-collapse:collapse;
+
+  margin-top:15px;
+}
+
+/* ✅ Table Header */
+.history-table th{
+  background:#4f46e5;
+
+  color:white;
+
+  padding:14px 18px;
+
+  text-align:center;
+
+  font-size:14px;
+  font-weight:600;
+
+  white-space:nowrap;
+}
+
+/* ✅ Table Cells */
+.history-table td{
+  padding:14px 18px;
+
+  text-align:center;
+
+  border-bottom:1px solid #e5e7eb;
+
+  font-size:14px;
+
+  white-space:nowrap;
+}
+
+/* ✅ Table Row Hover */
+.history-table tr:hover{
+  background:#f8fafc;
+}
+
+/* ✅ Balance */
+.balance{
+  font-weight:700;
+}
+
+/* ✅ Empty State */
+.empty-state{
+  margin-top:20px;
+
+  padding:25px;
+
+  background:#f8fafc;
+
+  border-radius:10px;
+
+  text-align:center;
+
+  color:#64748b;
+
+  font-size:15px;
+  font-weight:500;
+}
+
+/* ✅ Mobile */
+@media(max-width:768px){
+
+  .page-container{
+    padding-top:80px;
+  }
+
+  .history{
+    padding:22px;
+  }
+
+  .history h2{
+    font-size:28px;
+  }
+
+  .history-table{
+    display:block;
+
+    overflow-x:auto;
+
+    white-space:nowrap;
+  }
+
+}
