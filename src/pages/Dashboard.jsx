@@ -24,12 +24,12 @@ function Dashboard() {
 
         const customerRes =
           await axios.get(
-            "http://localhost:5000/customers"
+            "https://digital-khata-backend-yalb.onrender.com/customers"
           );
 
         const txRes =
           await axios.get(
-            "http://localhost:5000/transactions"
+            "https://digital-khata-backend-yalb.onrender.com/transactions"
           );
 
         setCustomers(customerRes.data);

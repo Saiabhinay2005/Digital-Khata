@@ -34,7 +34,7 @@ function AddKhata() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/customers")
+      .get("https://digital-khata-backend-yalb.onrender.com/customers")
       .then((res) => setCustomers(res.data));
   }, []);
 
@@ -106,7 +106,7 @@ function AddKhata() {
     try {
 
       await axios.post(
-        "http://localhost:5000/transactions",
+        "https://digital-khata-backend-yalb.onrender.com/transactions",
         {
           ...form,
           type: "KHATA",

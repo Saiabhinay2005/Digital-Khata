@@ -58,7 +58,7 @@ function AddCustomer() {
     try {
 
       await axios.post(
-        "http://localhost:5000/customers",
+        "https://digital-khata-backend-yalb.onrender.com/customers",
         {
           name: trimmedName,
           phone: phoneNumber.number,

@@ -12,8 +12,8 @@ function History() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const customerRes = await axios.get("http://localhost:5000/customers");
-        const txRes = await axios.get("http://localhost:5000/transactions");
+        const customerRes = await axios.get("https://digital-khata-backend-yalb.onrender.com/customers");
+        const txRes = await axios.get("https://digital-khata-backend-yalb.onrender.com/transactions");
 
         setCustomers(customerRes.data);
         setTransactions(txRes.data);

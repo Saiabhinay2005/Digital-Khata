@@ -23,7 +23,7 @@ function Payments() {
       try {
 
         const res = await axios.get(
-          "http://localhost:5000/customers"
+          "https://digital-khata-backend-yalb.onrender.com/customers"
         );
 
         setCustomers(res.data);
@@ -84,7 +84,7 @@ function Payments() {
     try {
 
       await axios.post(
-        "http://localhost:5000/transactions",
+        "https://digital-khata-backend-yalb.onrender.com/transactions",
         {
           customerId: form.customerId,
           type: "PAYMENT",

@@ -33,12 +33,12 @@ function Customers() {
 
       const customerRes =
         await axios.get(
-          "http://localhost:5000/customers"
+          "https://digital-khata-backend-yalb.onrender.com/customers"
         );
 
       const txRes =
         await axios.get(
-          "http://localhost:5000/transactions"
+          "https://digital-khata-backend-yalb.onrender.com/transactions"
         );
 
       setCustomers(customerRes.data);
@@ -55,7 +55,7 @@ function Customers() {
     try {
 
       await axios.delete(
-        `http://localhost:5000/customers/${id}`
+        `https://digital-khata-backend-yalb.onrender.com/customers/${id}`
       );
 
       setCustomers(
