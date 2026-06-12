@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-
 import "./Navbar.css";
 
 import {
@@ -16,100 +15,69 @@ import {
 
 function Navbar() {
 
-  const [menuOpen, setMenuOpen] =
-    useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  function closeMenu() {
+  // ✅ Close menu after clicking
+  const closeMenu = () => {
     setMenuOpen(false);
-  }
+  };
+
+  // ✅ Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   return (
-
     <nav className="navbar">
 
       {/* ✅ Top Row */}
       <div className="navbar-top">
 
         {/* ✅ Logo */}
-        <h2 className="logo">
-          Digital Khata
-        </h2>
+        <h2 className="logo">Digital Khata</h2>
 
-        {/* ✅ Mobile Toggle */}
+        {/* ✅ Mobile Menu Toggle */}
         <button
           className="menu-btn"
-          onClick={() =>
-            setMenuOpen(!menuOpen)
-          }
+          onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen
-            ? <FaTimes />
-            : <FaBars />}
+          {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
 
       </div>
 
-      {/* ✅ Links */}
-      <div
-        className={`nav-links ${
-          menuOpen ? "show-menu" : ""
-        }`}
-      >
+      {/* ✅ Nav Links */}
+      <div className={`nav-links ${menuOpen ? "show-menu" : ""}`}>
 
-        <NavLink
-          to="/"
-          end
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaHome />
-          Dashboard
+        <NavLink to="/" end className="nav-item" onClick={closeMenu}>
+          <FaHome /> Dashboard
         </NavLink>
 
-        <NavLink
-          to="/customers"
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaUsers />
-          Customers
+        <NavLink to="/customers" className="nav-item" onClick={closeMenu}>
+          <FaUsers /> Customers
         </NavLink>
 
-        <NavLink
-          to="/add-customer"
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaUserPlus />
-          Add Customer
+        <NavLink to="/add-customer" className="nav-item" onClick={closeMenu}>
+          <FaUserPlus /> Add Customer
         </NavLink>
 
-        <NavLink
-          to="/add-khata"
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaBook />
-          Add Khata
+        <NavLink to="/add-khata" className="nav-item" onClick={closeMenu}>
+          <FaBook /> Add Khata
         </NavLink>
 
-        <NavLink
-          to="/payments"
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaMoneyBillWave />
-          Payments
+        <NavLink to="/payments" className="nav-item" onClick={closeMenu}>
+          <FaMoneyBillWave /> Payments
         </NavLink>
 
-        <NavLink
-          to="/history"
-          className="nav-item"
-          onClick={closeMenu}
-        >
-          <FaHistory />
-          History
+        <NavLink to="/history" className="nav-item" onClick={closeMenu}>
+          <FaHistory /> History
         </NavLink>
+
+        {/* ✅ Logout Button */}
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
 
       </div>
 

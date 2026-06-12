@@ -32,19 +32,17 @@ function AddCustomer() {
     const trimmedName = name.trim();
     const trimmedVillage = village.trim();
 
-    // ✅ Required validation
+    // ✅ Validation
     if (!trimmedName || !phone || !trimmedVillage) {
       setError("All fields are required");
       return;
     }
 
-    // ✅ Full name validation
     if (trimmedName.split(" ").length < 2) {
       setError("Please enter full name with surname");
       return;
     }
 
-    // ✅ Phone validation
     const phoneNumber = parsePhoneNumberFromString(
       phone,
       country
@@ -57,25 +55,32 @@ function AddCustomer() {
 
     try {
 
+      // ✅ ✅ IMPORTANT FIX
+      const token = localStorage.getItem("token");
+
       await axios.post(
         "https://digital-khata-backend-yalb.onrender.com/customers",
         {
           name: trimmedName,
           phone: phoneNumber.number,
           village: trimmedVillage
+        },
+        {
+          headers: {
+            Authorization: token   // ✅ REQUIRED
+          }
         }
       );
 
-      // ✅ Success Message
+      // ✅ Success
       setSuccess("✅ Customer Added Successfully");
 
-      // ✅ Reset form
+      // ✅ Reset
       setName("");
       setPhone("");
       setVillage("");
       setCountry("IN");
 
-      // ✅ Auto-remove message after 4 sec
       setTimeout(() => {
         setSuccess("");
       }, 4000);
@@ -100,33 +105,31 @@ function AddCustomer() {
 
         <form onSubmit={handleSubmit}>
 
-          {/* Success */}
+          {/* ✅ Success */}
           {success && (
             <p className="success-message">
               {success}
             </p>
           )}
 
-          {/* Error */}
+          {/* ✅ Error */}
           {error && (
             <p className="error">
               {error}
             </p>
           )}
 
-          {/* Full Name */}
+          {/* ✅ Name */}
           <input
             type="text"
             placeholder="Full Name (Name + Surname)"
             value={name}
             onChange={(e) =>
-              setName(
-                e.target.value.replace(/\s+/g, " ")
-              )
+              setName(e.target.value.replace(/\s+/g, " "))
             }
           />
 
-          {/* Country */}
+          {/* ✅ Country */}
           <select
             value={country}
             onChange={(e) =>
@@ -140,31 +143,27 @@ function AddCustomer() {
             ))}
           </select>
 
-          {/* Phone */}
+          {/* ✅ Phone */}
           <input
             type="tel"
             placeholder="Enter phone number"
             value={phone}
             onChange={(e) =>
-              setPhone(
-                e.target.value.replace(/\D/g, "")
-              )
+              setPhone(e.target.value.replace(/\D/g, " "))
             }
           />
 
-          {/* Village */}
+          {/* ✅ Village */}
           <input
             type="text"
             placeholder="Village"
             value={village}
             onChange={(e) =>
-              setVillage(
-                e.target.value.replace(/\s+/g, " ")
-              )
+              setVillage(e.target.value.replace(/\s+/g, " "))
             }
           />
 
-          {/* Save Button */}
+          {/* ✅ Button */}
           <button type="submit">
             Save Customer
           </button>

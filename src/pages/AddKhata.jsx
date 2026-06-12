@@ -6,6 +6,7 @@ function AddKhata() {
 
   const [customers, setCustomers] = useState([]);
   const [voiceText, setVoiceText] = useState("");
+  const [matchedList, setMatchedList] = useState([]);
 
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -32,10 +33,17 @@ function AddKhata() {
     date: today
   });
 
+  /* ✅ FETCH CUSTOMERS */
   useEffect(() => {
-    axios
-      .get("https://digital-khata-backend-yalb.onrender.com/customers")
-      .then((res) => setCustomers(res.data));
+    const token = localStorage.getItem("token");
+
+    axios.get(
+      "https://digital-khata-backend-yalb.onrender.com/customers",
+      { headers: { Authorization: token } }
+    )
+    .then(res => setCustomers(res.data))
+    .catch(() => setError("Failed to load customers"));
+
   }, []);
 
   function handleChange(e) {
@@ -45,7 +53,7 @@ function AddKhata() {
     });
   }
 
-  // ✅ Voice Input
+  /* ✅ VOICE INPUT FIXED */
   function startVoice(lang) {
 
     if (!recognition) {
@@ -54,7 +62,6 @@ function AddKhata() {
     }
 
     recognition.lang = lang;
-
     recognition.start();
 
     recognition.onstart = () => {
@@ -63,24 +70,78 @@ function AddKhata() {
 
     recognition.onresult = (event) => {
 
-      const text =
-        event.results[0][0].transcript;
+      let text = event.results[0][0].transcript.toLowerCase();
 
       setVoiceText(`✅ ${text}`);
 
-      // ✅ Fill items
-      setForm((prev) => ({
-        ...prev,
-        items: text
-      }));
+      /* ✅ remove noise words */
+      text = text.replace(/\b(say|add|for|took|taken)\b/g, "").trim();
 
-      // ✅ Extract amount
+      /* ✅ extract amount */
       const nums = text.match(/\d+/g);
+      let amount = "";
 
       if (nums) {
-        setForm((prev) => ({
+        amount = nums[nums.length - 1];
+
+        setForm(prev => ({
           ...prev,
-          amount: nums[nums.length - 1]
+          amount
+        }));
+      }
+
+      /* ✅ detect customer */
+      let selectedCustomer = null;
+
+      for (let c of customers) {
+        const parts = c.name.toLowerCase().split(" ");
+
+        if (parts.some(p => text.includes(p))) {
+          selectedCustomer = c;
+          break;
+        }
+      }
+
+      if (selectedCustomer) {
+        setForm(prev => ({
+          ...prev,
+          customerId: selectedCustomer._id
+        }));
+
+        /* ✅ remove ALL name parts cleanly */
+        const parts = selectedCustomer.name.toLowerCase().split(" ");
+
+        parts.forEach(p => {
+          text = text.replace(new RegExp(`\\b${p}\\b`, "g"), "");
+        });
+      }
+
+      /* ✅ remove amount */
+      if (amount) {
+        text = text.replace(amount, "");
+      }
+
+      /* ✅ clean remaining text */
+      let words = text
+        .split(" ")
+        .map(w => w.trim())
+        .filter(w => w.length > 2);
+
+      /* ✅ fix common speech mistakes */
+      words = words.map(w =>
+        w === "rise" ? "rice" : w
+      );
+
+      /* ✅ remove duplicates */
+      words = [...new Set(words)];
+
+      /* ✅ build final items */
+      const finalItems = words.join(" ");
+
+      if (finalItems) {
+        setForm(prev => ({
+          ...prev,
+          items: finalItems
         }));
       }
     };
@@ -90,7 +151,7 @@ function AddKhata() {
     };
   }
 
-  // ✅ Submit
+  /* ✅ SUBMIT */
   async function handleSubmit(e) {
 
     e.preventDefault();
@@ -105,19 +166,22 @@ function AddKhata() {
 
     try {
 
+      const token = localStorage.getItem("token");
+
       await axios.post(
         "https://digital-khata-backend-yalb.onrender.com/transactions",
         {
           ...form,
           type: "KHATA",
           amount: Number(form.amount)
+        },
+        {
+          headers: { Authorization: token }
         }
       );
 
-      // ✅ Success Message
       setSuccess("✅ Khata Added Successfully");
 
-      // ✅ Reset Form
       setForm({
         customerId: "",
         amount: "",
@@ -127,61 +191,41 @@ function AddKhata() {
       });
 
       setVoiceText("");
+      setMatchedList([]);
 
-      // ✅ Auto Remove
-      setTimeout(() => {
-        setSuccess("");
-      }, 4000);
+      setTimeout(() => setSuccess(""), 4000);
 
-    } catch (err) {
+    } catch {
       setError("Failed to save khata");
     }
   }
 
   return (
     <div className="page-container">
-
       <div className="form-card">
 
         <h2>Add Khata Entry</h2>
 
         <form onSubmit={handleSubmit}>
 
-          {/* ✅ Success Message */}
-          {success && (
-            <p className="success-message">
-              {success}
-            </p>
-          )}
+          {success && <p className="success-message">{success}</p>}
+          {error && <p className="error">{error}</p>}
 
-          {/* ✅ Error Message */}
-          {error && (
-            <p className="error">
-              {error}
-            </p>
-          )}
-
-          {/* ✅ Customer */}
+          {/* ✅ CUSTOMER */}
           <select
             name="customerId"
             value={form.customerId}
             onChange={handleChange}
           >
-            <option value="">
-              Select Customer
-            </option>
-
-            {customers.map((c) => (
-              <option
-                key={c._id}
-                value={c._id}
-              >
+            <option value="">Select Customer</option>
+            {customers.map(c => (
+              <option key={c._id} value={c._id}>
                 {c.name} ({c.village})
               </option>
             ))}
           </select>
 
-          {/* ✅ Amount */}
+          {/* ✅ AMOUNT */}
           <input
             type="number"
             name="amount"
@@ -190,7 +234,7 @@ function AddKhata() {
             onChange={handleChange}
           />
 
-          {/* ✅ Date */}
+          {/* ✅ DATE */}
           <input
             type="date"
             name="date"
@@ -198,9 +242,8 @@ function AddKhata() {
             onChange={handleChange}
           />
 
-          {/* ✅ Items */}
+          {/* ✅ ITEMS */}
           <div className="items-container">
-
             <input
               type="text"
               name="items"
@@ -209,34 +252,18 @@ function AddKhata() {
               onChange={handleChange}
             />
 
-            {/* ✅ Voice Buttons */}
             <div className="voice-buttons">
-
-              <button
-                type="button"
-                onClick={() => startVoice("te-IN")}
-              >
+              <button type="button" onClick={() => startVoice("te-IN")}>
                 🎤 తెలుగు
               </button>
-
-              <button
-                type="button"
-                onClick={() => startVoice("en-IN")}
-              >
+              <button type="button" onClick={() => startVoice("en-IN")}>
                 🎤 English
               </button>
-
             </div>
           </div>
 
-          {/* ✅ Voice Feedback */}
-          {voiceText && (
-            <p className="voice-text">
-              {voiceText}
-            </p>
-          )}
+          {voiceText && <p className="voice-text">{voiceText}</p>}
 
-          {/* ✅ Remarks */}
           <input
             type="text"
             name="remarks"
@@ -245,15 +272,10 @@ function AddKhata() {
             onChange={handleChange}
           />
 
-          {/* ✅ Submit */}
-          <button type="submit">
-            Save Khata
-          </button>
+          <button type="submit">Save Khata</button>
 
         </form>
-
       </div>
-
     </div>
   );
 }

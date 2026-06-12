@@ -1,0 +1,153 @@
+/* ✅ Page background */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #dfe9f3, #ffffff);
+}
+
+/* ✅ Full container */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+/* ✅ Card box */
+.auth-box {
+  background: #ffffff;
+  padding: 25px;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 14px;
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.auth-box:hover {
+  transform: translateY(-3px);
+}
+
+/* ✅ Title */
+.auth-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ✅ Labels */
+.auth-box label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* ✅ Inputs */
+.auth-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 12px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: border 0.2s;
+}
+
+.auth-box input:focus {
+  border-color: #1e88e5;
+  outline: none;
+}
+
+/* ✅ Forgot Password link */
+.forgot-link {
+  text-align: right;
+  font-size: 13px;
+  color: #1e88e5;
+  cursor: pointer;
+  margin-top: -5px;
+  margin-bottom: 12px;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Button */
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  background: #1e88e5;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.auth-box button:hover {
+  background: #1565c0;
+}
+
+.auth-box button:active {
+  transform: scale(0.97);
+}
+
+/* ✅ Error text */
+.error-msg {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* ✅ Success text */
+.success-msg {
+  color: #2ecc71;
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* ✅ Bottom link (Signup/Login) */
+.auth-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+/* ✅ Link styling */
+.auth-link span {
+  color: #1e88e5;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.auth-link span:hover {
+  text-decoration: underline;
+}
+
+/* ✅ MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+
+  .auth-box {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .auth-box h2 {
+    font-size: 20px;
+  }
+
+  .auth-box input {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .auth-box button {
+    padding: 14px;
+    font-size: 16px;
+  }
+}

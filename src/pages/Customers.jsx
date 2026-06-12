@@ -79,14 +79,17 @@ function Customers() {
     balance
   ) => {
 
-    const message =
-`నమస్తే ${customer.name} గారు,
+    const shopName = localStorage.getItem("name");
 
-మీకు ₹${balance} బాకీగా ఉంది.
+const message = `
+నమస్తే ${customer.name} గారు,
 
-దయచేసి వీలైనంత త్వరగా చెల్లించండి.
+మీకు ₹${balance} బాకీ ఉంది.
 
-– ఈసు గారు, గణపర్తి`;
+దయచేసి త్వరగా చెల్లించండి.
+
+- ${shopName}
+`;
 
     const cleanedPhone =
       customer.phone
