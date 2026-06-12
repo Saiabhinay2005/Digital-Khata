@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 export default function Login() {
-  const navigate = useNavigate();  // ✅ IMPORTANT
+  const navigate = useNavigate();
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -33,12 +33,12 @@ export default function Login() {
 
       const data = await res.json();
 
-      if (data.token) {
+      if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("name", data.name);
 
-        // ✅ FIX: use navigate instead of reload
-        navigate("/");
+        // ✅ IMPORTANT → force reload so Navbar shows
+        window.location.href = "/";
       } else {
         setError(data.message || "Login failed");
       }
@@ -75,7 +75,6 @@ export default function Login() {
           }}
         />
 
-        {/* ✅ Forgot Password */}
         <p
           className="forgot-link"
           onClick={() => navigate("/forgot-password")}
@@ -83,7 +82,6 @@ export default function Login() {
           Forgot Password?
         </p>
 
-        {/* ✅ ERROR */}
         {error && <p className="error-msg">{error}</p>}
 
         <button onClick={handleLogin}>
@@ -92,9 +90,7 @@ export default function Login() {
 
         <div className="auth-link">
           Don’t have an account?{" "}
-          <span onClick={() => navigate("/signup")}>
-            Signup
-          </span>
+          <span onClick={() => navigate("/signup")}>Signup</span>
         </div>
       </div>
     </div>

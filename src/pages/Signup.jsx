@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";   // ✅ ADD THIS
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 export default function Signup() {
-  const navigate = useNavigate();  // ✅ ADD THIS
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -24,7 +24,7 @@ export default function Signup() {
 
     try {
       const res = await fetch(
-       "https://digital-khata-backend-yalb.onrender.com/api/auth/signup" ,// ✅ FIXED
+        "https://digital-khata-backend-yalb.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: {
@@ -36,15 +36,14 @@ export default function Signup() {
 
       const data = await res.json();
 
-      if (data.message) {
+      if (res.ok) {
         setMessage("Signup successful ✅ Redirecting...");
 
         setTimeout(() => {
-          navigate("/login");   // ✅ FIXED
+          navigate("/login");
         }, 1500);
-
       } else {
-        setError("Signup failed");
+        setError(data.message || "Signup failed");
       }
     } catch {
       setError("Server error. Try again.");
@@ -98,9 +97,7 @@ export default function Signup() {
 
         <div className="auth-link">
           Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>
-            Login
-          </span>
+          <span onClick={() => navigate("/login")}>Login</span>
         </div>
       </div>
     </div>
