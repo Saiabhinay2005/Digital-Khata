@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 export default function Login() {
+  const navigate = useNavigate();  // ✅ IMPORTANT
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -18,28 +20,28 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ phone, password })
-      });
+      const res = await fetch(
+        "https://digital-khata-backend.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone, password }),
+        }
+      );
 
       const data = await res.json();
 
       if (data.token) {
-
-        /* ✅ IMPORTANT FIX HERE */
         localStorage.setItem("token", data.token);
-        localStorage.setItem("name", data.name);   // ✅ STORE SHOP NAME
+        localStorage.setItem("name", data.name);
 
-        window.location.href = "/";
-
+        // ✅ FIX: use navigate instead of reload
+        navigate("/");
       } else {
         setError(data.message || "Login failed");
       }
-
     } catch {
       setError("Server error. Try again.");
     }
@@ -50,7 +52,6 @@ export default function Login() {
   return (
     <div className="auth-container">
       <div className="auth-box">
-
         <h2>Login</h2>
 
         <label>Phone Number</label>
@@ -77,12 +78,12 @@ export default function Login() {
         {/* ✅ Forgot Password */}
         <p
           className="forgot-link"
-          onClick={() => window.location.href = "/forgot-password"}
+          onClick={() => navigate("/forgot-password")}
         >
           Forgot Password?
         </p>
 
-        {/* ✅ ERROR MESSAGE */}
+        {/* ✅ ERROR */}
         {error && <p className="error-msg">{error}</p>}
 
         <button onClick={handleLogin}>
@@ -91,11 +92,10 @@ export default function Login() {
 
         <div className="auth-link">
           Don’t have an account?{" "}
-          <span onClick={() => (window.location.href = "/signup")}>
+          <span onClick={() => navigate("/signup")}>
             Signup
           </span>
         </div>
-
       </div>
     </div>
   );

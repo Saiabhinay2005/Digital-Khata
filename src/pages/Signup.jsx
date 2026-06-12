@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";   // ✅ ADD THIS
 import "./Auth.css";
 
 export default function Signup() {
+  const navigate = useNavigate();  // ✅ ADD THIS
 
-  const [name, setName] = useState("");        // ✅ NEW
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -11,7 +13,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!name || !phone || !password) {        // ✅ UPDATED
+    if (!name || !phone || !password) {
       setError("Please fill all fields");
       return;
     }
@@ -21,25 +23,26 @@ export default function Signup() {
     setMessage("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,          // ✅ SEND NAME
-          phone,
-          password
-        }),
-      });
+      const res = await fetch(
+        "https://digital-khata-backend.onrender.com/api/auth/signup", // ✅ FIXED
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, phone, password }),
+        }
+      );
 
       const data = await res.json();
 
       if (data.message) {
         setMessage("Signup successful ✅ Redirecting...");
+
         setTimeout(() => {
-          window.location.href = "/login";
+          navigate("/login");   // ✅ FIXED
         }, 1500);
+
       } else {
         setError("Signup failed");
       }
@@ -53,10 +56,8 @@ export default function Signup() {
   return (
     <div className="auth-container">
       <div className="auth-box">
-
         <h2>Create Account</h2>
 
-        {/* ✅ NEW FIELD */}
         <label>Shop Name</label>
         <input
           placeholder="Enter shop name"
@@ -88,10 +89,7 @@ export default function Signup() {
           }}
         />
 
-        {/* ✅ ERROR */}
         {error && <p className="error-msg">{error}</p>}
-
-        {/* ✅ SUCCESS */}
         {message && <p className="success-msg">{message}</p>}
 
         <button onClick={handleSignup}>
@@ -100,11 +98,10 @@ export default function Signup() {
 
         <div className="auth-link">
           Already have an account?{" "}
-          <span onClick={() => (window.location.href = "/login")}>
+          <span onClick={() => navigate("/login")}>
             Login
           </span>
         </div>
-
       </div>
     </div>
   );
