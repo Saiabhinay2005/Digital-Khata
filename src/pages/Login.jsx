@@ -21,7 +21,7 @@ export default function Login() {
 
     try {
       const res = await fetch(
-        "https://digital-khata-backend.onrender.com/api/auth/login",
+        "https://digital-khata-backend-yalb.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

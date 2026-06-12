@@ -24,7 +24,7 @@ export default function Signup() {
 
     try {
       const res = await fetch(
-        "https://digital-khata-backend.onrender.com/api/auth/signup", // ✅ FIXED
+       "https://digital-khata-backend-yalb.onrender.com/api/auth/signup" ,// ✅ FIXED
         {
           method: "POST",
           headers: {
