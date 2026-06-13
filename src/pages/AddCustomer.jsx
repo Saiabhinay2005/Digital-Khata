@@ -55,9 +55,32 @@ function AddCustomer() {
 
     try {
 
-      // ✅ ✅ IMPORTANT FIX
       const token = localStorage.getItem("token");
 
+      // ✅ ✅ CHECK DUPLICATE BEFORE ADDING
+      const res = await axios.get(
+        "https://digital-khata-backend-yalb.onrender.com/customers",
+        {
+          headers: {
+            Authorization: token
+          }
+        }
+      );
+
+      const customers = Array.isArray(res.data)
+        ? res.data
+        : res.data.customers || [];
+
+      const alreadyExists = customers.some(
+        (c) => c.phone === phoneNumber.number
+      );
+
+      if (alreadyExists) {
+        setError("Customer with this phone already exists");
+        return;
+      }
+
+      // ✅ ADD CUSTOMER
       await axios.post(
         "https://digital-khata-backend-yalb.onrender.com/customers",
         {
@@ -67,7 +90,7 @@ function AddCustomer() {
         },
         {
           headers: {
-            Authorization: token   // ✅ REQUIRED
+            Authorization: token
           }
         }
       );
@@ -75,7 +98,7 @@ function AddCustomer() {
       // ✅ Success
       setSuccess("✅ Customer Added Successfully");
 
-      // ✅ Reset
+      // ✅ Reset form
       setName("");
       setPhone("");
       setVillage("");
@@ -87,8 +110,8 @@ function AddCustomer() {
 
     } catch (error) {
 
-      if (error.response?.data?.error) {
-        setError(error.response.data.error);
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
       } else {
         setError("Failed to add customer");
       }
@@ -107,16 +130,12 @@ function AddCustomer() {
 
           {/* ✅ Success */}
           {success && (
-            <p className="success-message">
-              {success}
-            </p>
+            <p className="success-message">{success}</p>
           )}
 
           {/* ✅ Error */}
           {error && (
-            <p className="error">
-              {error}
-            </p>
+            <p className="error">{error}</p>
           )}
 
           {/* ✅ Name */}
@@ -143,13 +162,13 @@ function AddCustomer() {
             ))}
           </select>
 
-          {/* ✅ Phone */}
+          {/* ✅ Phone (FIXED) */}
           <input
             type="tel"
             placeholder="Enter phone number"
             value={phone}
             onChange={(e) =>
-              setPhone(e.target.value.replace(/\D/g, " "))
+              setPhone(e.target.value.replace(/\D/g, ""))
             }
           />
 
@@ -163,7 +182,6 @@ function AddCustomer() {
             }
           />
 
-          {/* ✅ Button */}
           <button type="submit">
             Save Customer
           </button>

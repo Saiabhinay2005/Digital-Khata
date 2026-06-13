@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Payments.css";
-import axios from "axios";
+import API from "../api";
 
 function Payments() {
 
@@ -15,24 +15,22 @@ function Payments() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // ✅ Fetch customers
+  /* ✅ Fetch customers */
   useEffect(() => {
 
     async function fetchCustomers() {
-
       try {
 
-        const res = await axios.get(
-          "https://digital-khata-backend-yalb.onrender.com/customers"
-        );
+        const res = await API.get("/customers");
 
-        setCustomers(res.data);
+        const customersData = Array.isArray(res.data)
+          ? res.data
+          : res.data.customers || [];
+
+        setCustomers(customersData);
 
       } catch (error) {
-        console.log(
-          "Error fetching customers:",
-          error
-        );
+        console.log("Error fetching customers:", error);
       }
     }
 
@@ -40,11 +38,10 @@ function Payments() {
 
   }, []);
 
-  // ✅ Default date
+  /* ✅ Default date */
   useEffect(() => {
 
-    const today =
-      new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0];
 
     setForm((prev) => ({
       ...prev,
@@ -53,9 +50,8 @@ function Payments() {
 
   }, []);
 
-  // ✅ Input Change
+  /* ✅ Input Change */
   function handleChange(e) {
-
     const { name, value } = e.target;
 
     setForm({
@@ -64,64 +60,42 @@ function Payments() {
     });
   }
 
-  // ✅ Submit Payment
+  /* ✅ Submit Payment */
   async function handleSubmit(e) {
 
     e.preventDefault();
-
     setError("");
     setSuccess("");
 
-    if (
-      !form.customerId ||
-      !form.amount ||
-      !form.paymentDate
-    ) {
+    if (!form.customerId || !form.amount || !form.paymentDate) {
       setError("All fields required");
       return;
     }
 
     try {
 
-      await axios.post(
-        "https://digital-khata-backend-yalb.onrender.com/transactions",
-        {
-          customerId: form.customerId,
-          type: "PAYMENT",
-          amount: Number(form.amount),
+      await API.post("/transactions", {
+        customerId: form.customerId,
+        type: "PAYMENT",
+        amount: Number(form.amount),
+        date: new Date(form.paymentDate).toISOString(),
+        createdAt: new Date().toISOString()
+      });
 
-          date: new Date(
-            form.paymentDate
-          ).toISOString(),
+      setSuccess("✅ Payment Added Successfully");
 
-          createdAt: new Date().toISOString()
-        }
-      );
-
-      // ✅ Success Message
-      setSuccess(
-        "✅ Payment Added Successfully"
-      );
-
-      // ✅ Reset Form
       setForm({
         customerId: "",
         amount: "",
-        paymentDate:
-          new Date()
-            .toISOString()
-            .split("T")[0]
+        paymentDate: new Date().toISOString().split("T")[0]
       });
 
-      // ✅ Auto Remove Message
       setTimeout(() => {
         setSuccess("");
       }, 4000);
 
     } catch (error) {
-
       console.log(error);
-
       setError("Failed to add payment");
     }
   }
@@ -135,18 +109,12 @@ function Payments() {
 
         <form onSubmit={handleSubmit}>
 
-          {/* ✅ Success Message */}
           {success && (
-            <p className="success-message">
-              {success}
-            </p>
+            <p className="success-message">{success}</p>
           )}
 
-          {/* ✅ Error Message */}
           {error && (
-            <p className="error">
-              {error}
-            </p>
+            <p className="error">{error}</p>
           )}
 
           {/* ✅ Customer Dropdown */}
@@ -160,14 +128,12 @@ function Payments() {
               Select Customer
             </option>
 
-            {customers.map((c) => (
-              <option
-                key={c._id}
-                value={c._id}
-              >
-                {c.name} ({c.village})
-              </option>
-            ))}
+            {customers.length > 0 &&
+              customers.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name} ({c.village})
+                </option>
+              ))}
 
           </select>
 
@@ -180,7 +146,7 @@ function Payments() {
             onChange={handleChange}
           />
 
-          {/* ✅ Payment Date */}
+          {/* ✅ Date */}
           <input
             type="date"
             name="paymentDate"
@@ -188,7 +154,6 @@ function Payments() {
             onChange={handleChange}
           />
 
-          {/* ✅ Submit Button */}
           <button type="submit">
             Save Payment
           </button>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./Dashboard.css";
-import axios from "axios";
+import API from "../api";
 
 import {
   FaUsers,
@@ -16,31 +16,30 @@ function Dashboard() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const customerRes = await axios.get(
-          "https://digital-khata-backend-yalb.onrender.com/customers",
-          { headers: { Authorization: token } }
-        );
-
-        const txRes = await axios.get(
-          "https://digital-khata-backend-yalb.onrender.com/transactions",
-          { headers: { Authorization: token } }
-        );
-
-        setCustomers(customerRes.data || []);
-        setTransactions(txRes.data || []);
-
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
     fetchData();
   }, []);
+
+  async function fetchData() {
+    try {
+
+      const customerRes = await API.get("/customers");
+      const txRes = await API.get("/transactions");
+
+      const customersData = Array.isArray(customerRes.data)
+        ? customerRes.data
+        : customerRes.data.customers || [];
+
+      const transactionsData = Array.isArray(txRes.data)
+        ? txRes.data
+        : txRes.data.transactions || [];
+
+      setCustomers(customersData);
+      setTransactions(transactionsData);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   /* ✅ CALCULATIONS */
   const totalCustomers = customers.length;
@@ -65,12 +64,13 @@ function Dashboard() {
     .slice(-5)
     .reverse();
 
-  /* ✅ PENDING CUSTOMERS */
+  /* ✅ Pending customers */
   const pendingCustomers = customers
     .map((customer) => {
 
       const customerTransactions = transactions.filter(
-        (tx) => tx.customerId === customer._id
+        (tx) =>
+          tx.customerId?.toString() === customer._id?.toString()
       );
 
       const khata = customerTransactions
@@ -132,11 +132,12 @@ function Dashboard() {
 
         </div>
 
-        {/* ✅ MAIN LAYOUT */}
+        {/* ✅ MAIN */}
         <div className="dashboard-layout">
 
-          {/* ✅ LEFT */}
+          {/* LEFT */}
           <div className="left-section">
+
             <section>
               <h2>Recent Transactions</h2>
 
@@ -146,7 +147,8 @@ function Dashboard() {
                 recentTransactions.map((tx) => {
 
                   const customer = customers.find(
-                    (c) => c._id === tx.customerId
+                    (c) =>
+                      c._id?.toString() === tx.customerId?.toString()
                   );
 
                   return (
@@ -162,9 +164,10 @@ function Dashboard() {
 
                       <span
                         style={{
-                          color: tx.type === "KHATA"
-                            ? "#dc2626"
-                            : "#16a34a",
+                          color:
+                            tx.type === "KHATA"
+                              ? "#dc2626"
+                              : "#16a34a",
                           fontWeight: "600"
                         }}
                       >
@@ -179,16 +182,16 @@ function Dashboard() {
                   );
                 })
               )}
+
             </section>
+
           </div>
 
-          {/* ✅ RIGHT */}
+          {/* RIGHT */}
           <div className="right-section">
 
-            {/* ✅ Quick Actions */}
             <section>
               <h2>Quick Actions</h2>
-
               <div className="quick-actions">
                 <Link to="/add-customer"><button>Add Customer</button></Link>
                 <Link to="/add-khata"><button>Add Khata</button></Link>
@@ -196,7 +199,7 @@ function Dashboard() {
               </div>
             </section>
 
-            {/* ✅ ✅ Pending Customers with RED color */}
+            {/* Pending Customers */}
             <section>
               <h2>Pending Customers</h2>
 
@@ -208,17 +211,9 @@ function Dashboard() {
                 pendingCustomers.map((c) => (
                   <div className="pending-card" key={c._id}>
                     <span>{c.name}</span>
-
-                    {/* ✅ FINAL FIX */}
-                    <span
-                      style={{
-                        color: "#dc2626",
-                        fontWeight: "600"
-                      }}
-                    >
+                    <span style={{ color: "#dc2626", fontWeight: "600" }}>
                       ₹{c.balance}
                     </span>
-
                   </div>
                 ))
               )}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./History.css";
-import axios from "axios";
+import API from "../api"; // ✅ FIX: use API
 
 function History() {
 
@@ -12,11 +12,20 @@ function History() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const customerRes = await axios.get("https://digital-khata-backend-yalb.onrender.com/customers");
-        const txRes = await axios.get("https://digital-khata-backend-yalb.onrender.com/transactions");
 
-        setCustomers(customerRes.data);
-        setTransactions(txRes.data);
+        const customerRes = await API.get("/customers");
+        const txRes = await API.get("/transactions");
+
+        const customersData = Array.isArray(customerRes.data)
+          ? customerRes.data
+          : customerRes.data.customers || [];
+
+        const transactionsData = Array.isArray(txRes.data)
+          ? txRes.data
+          : txRes.data.transactions || [];
+
+        setCustomers(customersData);
+        setTransactions(transactionsData);
 
       } catch (error) {
         console.log(error);
@@ -26,25 +35,27 @@ function History() {
     fetchData();
   }, []);
 
-  /* ✅ ✅ IMPROVED SORTING (supports paymentDate in future) */
+  /* ✅ ✅ FIXED FILTER */
   const customerTransactions = transactions
-    .filter((tx) => tx.customerId === selectedCustomer)
+    .filter(
+      (tx) =>
+        tx.customerId?.toString() === selectedCustomer?.toString()
+    )
     .sort((a, b) => {
 
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
 
-      const dateDiff = dateA - dateB;
-      if (dateDiff !== 0) return dateDiff;
+      const diff = dateA - dateB;
+      if (diff !== 0) return diff;
 
-      // ✅ SAME DATE → KHATA first, PAYMENT after
       if (a.type === "KHATA" && b.type === "PAYMENT") return -1;
       if (a.type === "PAYMENT" && b.type === "KHATA") return 1;
 
       return 0;
     });
 
-  /* ✅ ✅ Correct balance */
+  /* ✅ Running balance */
   let runningBalance = 0;
 
   const processedTransactions = customerTransactions.map((tx) => {
@@ -70,17 +81,19 @@ function History() {
 
         <h2>Customer History</h2>
 
-        {/* ✅ Select Customer */}
+        {/* ✅ Dropdown */}
         <select
           value={selectedCustomer}
           onChange={(e) => setSelectedCustomer(e.target.value)}
         >
           <option value="">Select Customer</option>
+
           {customers.map((c) => (
             <option key={c._id} value={c._id}>
               {c.name} ({c.village})
             </option>
           ))}
+
         </select>
 
         {/* ✅ Empty */}
@@ -112,11 +125,8 @@ function History() {
                 return (
                   <tr key={tx._id}>
 
-                    {/* ✅ DATE (MAIN FIX HERE) */}
                     <td>
                       {new Date(tx.date).toLocaleDateString()}
-
-                      {/* ✅ OPTIONAL: Show entry date */}
                       {tx.createdAt && (
                         <div style={{ fontSize: "12px", color: "gray" }}>
                           Entered: {new Date(tx.createdAt).toLocaleDateString()}
@@ -124,24 +134,20 @@ function History() {
                       )}
                     </td>
 
-                    {/* ✅ Description */}
                     <td>
                       {isCredit
                         ? `Given items: ${tx.items || "Items"}`
                         : "Customer Paid"}
                     </td>
 
-                    {/* ✅ Credit */}
                     <td style={{ color: "#e74c3c" }}>
                       {isCredit ? `₹${amount}` : "-"}
                     </td>
 
-                    {/* ✅ Payment */}
                     <td style={{ color: "#27ae60" }}>
                       {!isCredit ? `₹${amount}` : "-"}
                     </td>
 
-                    {/* ✅ Balance */}
                     <td>
                       {tx.runningBalance > 0 ? (
                         <span style={{ color: "red", fontWeight: "600" }}>
